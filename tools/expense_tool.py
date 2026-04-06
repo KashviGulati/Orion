@@ -1,9 +1,17 @@
-# tools/expense_tool.py
+from db import cursor, conn
+import re
 
-def add_expense(amount, category):
-    # store in sqlite
-    return f"Added ₹{amount} to {category}"
+def add_expense(text):
+    amount = re.findall(r'\d+', text)
+    category = text.split("on")[-1].strip()
 
-def check_budget():
-    # calculate total spent
-    return "You are within budget"
+    if amount:
+        cursor.execute(
+            "INSERT INTO expenses (amount, category) VALUES (?, ?)",
+            (int(amount[0]), category)
+        )
+        conn.commit()
+
+        return f"Added ₹{amount[0]} to {category}"
+    
+    return "Could not parse expense"

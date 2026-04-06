@@ -1,13 +1,24 @@
 # agent_runner.py
 
 from agent_setup import agent
+from db import cursor
+
+def get_spending_data():
+    cursor.execute("SELECT SUM(amount) FROM expenses")
+    total = cursor.fetchone()[0] or 0
+    return total
+
 
 def autonomous_check():
-    prompt = """
-    Check:
-    1. If I'm overspending
-    2. If new relevant jobs exist
-    Send alerts if needed
+    total = get_spending_data()
+
+    prompt = f"""
+    User has spent ₹{total} so far this month.
+
+    Decide:
+    - Is this overspending?
+    - Should we alert the user?
+    - Give a short message (1–2 lines max)
     """
 
     response = agent.run(prompt)

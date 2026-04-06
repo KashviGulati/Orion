@@ -1,12 +1,19 @@
-from apscheduler.schedulers.background import BackgroundScheduler
-from agent_runner import autonomous_check_with_context
-from telegram_bot import send_message   # you'll create this
+# scheduler.py
 
-def daily_check():
-    result = autonomous_check_with_context()
+from apscheduler.schedulers.background import BackgroundScheduler
+from agent_runner import autonomous_check
+from messenger import send_message
+
+def run_autonomous_task():
+    print("🔥 Running autonomous check...")  # DEBUG
+    result = autonomous_check()
+    print("Result:", result)
     send_message(result)
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(daily_check, 'interval', hours=24)
 
-scheduler.start()
+# ⏰ run every 6 hours (change later)
+scheduler.add_job(run_autonomous_task, 'interval', minutes=1)
+
+def start_scheduler():
+    scheduler.start()

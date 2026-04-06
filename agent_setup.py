@@ -8,12 +8,14 @@ load_dotenv()
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.agents import initialize_agent, Tool
 
+from tools.budget_tool import check_budget
+
 from tools.expense_tool import add_expense
 from tools.job_tool import fetch_jobs
 
 # ✅ LLM setup
 llm = ChatGoogleGenerativeAI(
-    model="gemini-1.5-flash",
+    model="gemini-2.5-flash",
     temperature=0.3,
     google_api_key=os.getenv("GOOGLE_API_KEY")
 )
@@ -36,7 +38,12 @@ tools = [
         name="Job Finder",
         func=job_tool_wrapper,
         description="Use this to find recent job postings"
-    )
+    ),
+    Tool(
+    name="Budget Checker",
+    func=lambda x: check_budget(),
+    description="Check total spending"
+)
 ]
 
 # ✅ Agent
